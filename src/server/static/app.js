@@ -82,24 +82,46 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(1);
 var ReactDOM = __webpack_require__(2);
-// 'HelloProps' describes the shape of props.
-// State is never set so we use the '{}' type.
-var Hello = /** @class */ (function (_super) {
-    __extends(Hello, _super);
-    function Hello() {
-        return _super !== null && _super.apply(this, arguments) || this;
+var Todo = /** @class */ (function (_super) {
+    __extends(Todo, _super);
+    function Todo(props) {
+        var _this = _super.call(this, props) || this;
+        _this.state = {
+            things: [],
+            text: ''
+        };
+        _this.updateValue = _this.updateValue.bind(_this);
+        _this.func = _this.func.bind(_this);
+        return _this;
     }
-    Hello.prototype.render = function () {
-        return React.createElement("h1", null,
-            "hi ",
-            this.props.compiler,
-            " and ",
-            this.props.framework,
-            "!");
+    Todo.prototype.func = function (event) {
+        var _this = this;
+        event.preventDefault();
+        this.setState(function (prevState) { return ({
+            things: prevState.things.concat(_this.state.text),
+            text: ''
+        }); });
+        console.log(this.state);
     };
-    return Hello;
+    Todo.prototype.updateValue = function (event) {
+        this.setState({ text: event.target.value });
+    };
+    Todo.prototype.render = function () {
+        var row = [];
+        for (var _i = 0, _a = this.state.things; _i < _a.length; _i++) {
+            var i = _a[_i];
+            row.push(React.createElement("li", { key: i }, i));
+        }
+        return (React.createElement("div", null,
+            React.createElement("h1", null, this.props.children),
+            React.createElement("ul", null, row),
+            React.createElement("form", { onSubmit: this.func },
+                React.createElement("input", { onChange: this.updateValue, value: this.state.text, type: "text" }),
+                React.createElement("button", null, "click me"))));
+    };
+    return Todo;
 }(React.Component));
-ReactDOM.render(React.createElement(Hello, { compiler: "TypeScript", framework: "React" }), document.getElementById("root"));
+ReactDOM.render(React.createElement(Todo, null, "TO DO"), document.getElementById('root'));
 
 
 /***/ }),
@@ -116,3 +138,4 @@ module.exports = ReactDOM;
 
 /***/ })
 /******/ ]);
+//# sourceMappingURL=app.js.map

@@ -1,19 +1,67 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as React from "react"
+import * as ReactDOM from "react-dom"
 
-interface HelloProps { compiler: string; framework: string; }
+interface Event {
+	from: React.FormEvent<HTMLFormElement>;
+	change: React.ChangeEvent<HTMLInputElement>;
+}
 
-// 'HelloProps' describes the shape of props.
-// State is never set so we use the '{}' type.
-class Hello extends React.Component<HelloProps, {}> {
-    render() {
-        return <h1>hi {this.props.compiler} and {this.props.framework}!</h1>;
-    }
+interface TodoStates {
+	things: Array<string>;
+	text: string;
+}
+
+class Todo extends React.Component<any, TodoStates> {
+	constructor(props: any) {
+		super(props)
+		this.state = {
+			things: [],
+			text: ''
+		};
+		this.updateValue = this.updateValue.bind(this);
+		this.func = this.func.bind(this);
+	}
+
+
+	func(event: Event['from']) {
+		event.preventDefault();
+		this.setState(prevState => ({
+			things: prevState.things.concat(this.state.text),
+			text: ''
+		}));
+		console.log(this.state);
+	}
+
+	updateValue(event: Event['change']) {
+		this.setState({text: event.target.value});
+	}
+
+	render() {
+
+		let row = []
+		for (let i of this.state.things) {
+			row.push(<li key={i}>{i}</li>);
+		}
+
+		return (
+
+			<div>
+				<h1>{this.props.children}</h1>
+
+				<ul>{row}</ul>
+
+				<form onSubmit={this.func}>
+					<input 
+						onChange={this.updateValue} 
+						value={this.state.text}
+						type="text"
+					/>
+					<button>click me</button>
+				</form>
+			</div>
+		);
+	}
 }
 
 
-
-ReactDOM.render(
-    <Hello compiler="TypeScript" framework="React" />,
-    document.getElementById("root")
-);
+ReactDOM.render(<Todo>TO DO</Todo>, document.getElementById('root'));
