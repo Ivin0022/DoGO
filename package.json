@@ -1,0 +1,24 @@
+{
+  "name": "dogo",
+  "version": "0.0.1",
+  "description": "project mangment app",
+  "repository": "./git",
+  "main": "src/client/index.tsx",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.0.38",
+    "@types/react-dom": "^16.0.4",
+    "awesome-typescript-loader": "^3.4.1",
+    "source-map-loader": "^0.2.3",
+    "typescript": "^2.7.2",
+    "webpack-watch-livereload-plugin": "0.0.1"
+  }
+}
