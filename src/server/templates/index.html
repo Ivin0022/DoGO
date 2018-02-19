@@ -4,14 +4,6 @@
 	<meta charset="UTF-8">
 	<title>DoGO</title>
 
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-	<script type="text/javascript" charset="utf-8">
-	    var socket = io.connect('http://' + document.domain + ':' + location.port);
-	    socket.on('connect', function() {
-	    	console.log('helllo')
-	        socket.emit('myevent', {data: 'I\'m connected!'});
-	    });
-	</script>
 </head>
 <body>
 	<div id="root"></div>
@@ -19,6 +11,7 @@
 	<!-- Dependencies -->
 	<script crossorigin src="/static/lib/react.development.js"></script>
 	<script crossorigin src="/static/lib/react-dom.development.js"></script>
+	<script src="/static/lib/socket.io.js"></script>
 
 	<!-- Main -->
 	<script src="/static/app.js"></script>

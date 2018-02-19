@@ -1,66 +1,75 @@
 import * as React from "react"
 import * as ReactDOM from "react-dom"
+import * as SocketIO from 'socket.io-client'
+
+const io = SocketIO('http://localhost:5000');
+
+// io.on('connect', () => console.log('connected......');)
+io.emit('myevent', {data: "this is a new connection"});
 
 interface Event {
-	from: React.FormEvent<HTMLFormElement>;
-	change: React.ChangeEvent<HTMLInputElement>;
+    from: React.FormEvent<HTMLFormElement>;
+    change: React.ChangeEvent<HTMLInputElement>;
 }
 
 interface TodoStates {
-	things: Array<string>;
-	text: string;
+    things: Array<string>;
+    text: string;
 }
 
 class Todo extends React.Component<any, TodoStates> {
-	constructor(props: any) {
-		super(props)
-		this.state = {
-			things: [],
-			text: ''
-		};
-		this.updateValue = this.updateValue.bind(this);
-		this.func = this.func.bind(this);
-	}
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            things: [],
+            text: ''
+        };
+        this.updateValue = this.updateValue.bind(this);
+        this.submitFunc = this.submitFunc.bind(this);
+    }
 
 
-	func(event: Event['from']) {
-		event.preventDefault();
-		this.setState(prevState => ({
-			things: prevState.things.concat(this.state.text),
-			text: ''
-		}));
-		console.log(this.state);
-	}
+    submitFunc(event: Event['from']) {
+        event.preventDefault();
+        this.setState(prevState => ({
+            things: prevState.things.concat(this.state.text),
+            text: ''
+        }),
+        () => {
+            console.log(this.state);
+            io.emit('myevent', {data: this.state});
+        });
+    }
 
-	updateValue(event: Event['change']) {
-		this.setState({text: event.target.value});
-	}
+    updateValue(event: Event['change']) {
+        this.setState({text: event.target.value});
+    }
 
-	render() {
+    render() {
 
-		let row = []
-		for (let i of this.state.things) {
-			row.push(<li key={i}>{i}</li>);
-		}
+        let row = []
+        for (let i of this.state.things) {
+            row.push(<li key={i}>{i}</li>);
+        }
 
-		return (
+        return (
 
-			<div>
-				<h1>{this.props.children}</h1>
+            <div>
+                <h1>{this.props.children}</h1>
 
-				<ul>{row}</ul>
+                <ul>{row}</ul>
 
-				<form onSubmit={this.func}>
-					<input 
-						onChange={this.updateValue} 
-						value={this.state.text}
-						type="text"
-					/>
-					<button>click me</button>
-				</form>
-			</div>
-		);
-	}
+                <form onSubmit={this.submitFunc}>
+                    <input 
+                    onChange={this.updateValue} 
+                    value={this.state.text}
+                    type="text"
+                    />
+                    <button>click me</button>
+                </form>
+            </div>
+        );
+    }
 }
 
 

@@ -14,7 +14,7 @@ def home():
 
 @io.on('myevent')
 def hello(data):
-    print('hrelllllllllllllllllllll\n\n\n')
+    print('\n\n\n' + '---' * 10 + '\n\n\n')
     print(data)
 
 

@@ -3,10 +3,10 @@
     /* Basic Options */
     "target": "es5",                          /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017','ES2018' or 'ESNEXT'. */
     "module": "commonjs",                     /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */
-    "strict": true,                           /* Enable all strict type-checking options. */
+    // "strict": true,                           /* Enable all strict type-checking options. */
     "jsx": "react",                           /* Specify JSX code generation: 'preserve', 'react-native', or 'react'. */
     "sourceMap": true,                        /* Generates corresponding '.map' file. */
-    "noImplicitAny": true,                    /* Raise error on expressions and declarations with an implied 'any' type. */
+    // "noImplicitAny": true,                    /* Raise error on expressions and declarations with an implied 'any' type. */
     "outDir": "/src/server/static",           /* Redirect output structure to the directory. */
     // "lib": [],                             /* Specify library files to be included in the compilation. */
     // "allowJs": true,                       /* Allow javascript files to be compiled. */
@@ -56,6 +56,6 @@
   },
   
   "include": [
-    "./src/client/*"
+    "./src/client/**/*"
   ]
 }
