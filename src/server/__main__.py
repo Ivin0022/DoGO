@@ -14,8 +14,10 @@ def home():
 
 @io.on('myevent')
 def hello(data):
-    print('\n\n\n' + '---' * 10 + '\n\n\n')
+    print('\n' + '---' * 10 + '\n')
     print(data)
+    print('\n' + '---' * 10 + '\n')
+    io.emit('take it', data['data'])
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 export interface ItemsPorps {
-    items: Array<string>;
+    children: Array<string>;
 }
 
 export class ListItems extends React.Component<ItemsPorps, {}> {
@@ -12,11 +12,9 @@ export class ListItems extends React.Component<ItemsPorps, {}> {
 
     render() {
 
-        let _items = [];
-
-        for (let i of this.props.items) {
-            _items.push(<li key={i}>{i}</li>);
-        }
+        let _items = this.props.children.map((elt, index) => {
+            return <li key={index}>{elt}</li>;
+        });
 
         return <ul>{_items}</ul>;
     }
