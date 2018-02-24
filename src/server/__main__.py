@@ -1,39 +1,38 @@
 from flask import Flask, escape, render_template, session, redirect, request, url_for
-from flask_socketio import SocketIO
-import json_handler
+from sockets import socket_init
 
 app = Flask(__name__)
 app.config['SCERET_KEY'] = 'ashfksh'
 
-io = SocketIO(app)
-
-
-@app.route('/l')
-def launcher():
-    return render_template('launcher.html')
+io = socket_init(app)
 
 
 @app.route('/')
-def home():
-    return render_template('index.html')
+@app.route('/<name>')
+def home(name=''):
+    if 'username' in session:
+        print('\n\n enter \n')
+        return render_template('index.html', name=name)
+    return redirect('/login')
 
 
-@io.on('connect')
-def connect(*args):
-    io.emit('init-items-list', list(json_handler.getitems('todo.json')))
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        return redirect('/' + session['username'])
+    return render_template('login.html')
 
 
-@io.on('myevent')
-def hello(text):
-    print('\n' + '---' * 10 + '\n')
-    print(text)
-    print('\n' + '---' * 10 + '\n')
-
-    json_handler.append(text, 'todo.json')
-    io.emit('take it', text)
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect('/')
 
 
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
 
 if __name__ == '__main__':
     io.run(app, debug=True)
