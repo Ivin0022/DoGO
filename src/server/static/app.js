@@ -3922,17 +3922,23 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(7);
-var Items_1 = __webpack_require__(27);
 var SocketIO = __webpack_require__(28);
+var Items_1 = __webpack_require__(27);
 var IO = SocketIO('http://localhost:5000/');
 IO.on('connect', function () { return console.log('connected... '); });
 var ListContainer = /** @class */ (function (_super) {
     __extends(ListContainer, _super);
     function ListContainer(props) {
         var _this = _super.call(this, props) || this;
+        _this.setData = function (data) {
+            console.log(data);
+            _this.setState(function (prevState) { return ({
+                things: prevState.things.concat(data)
+            }); });
+        };
         _this.submitFunc = function (event) {
             event.preventDefault();
-            IO.emit('myevent', { data: _this.state.text });
+            IO.emit('myevent', _this.state.text);
             _this.setState({ text: '' });
         };
         _this.updateValue = function (event) {
@@ -3942,12 +3948,8 @@ var ListContainer = /** @class */ (function (_super) {
             things: [],
             text: ''
         };
-        IO.on('take it', function (data) {
-            console.log(data);
-            _this.setState(function (prevState) { return ({
-                things: prevState.things.concat(data)
-            }); });
-        });
+        IO.on('take it', _this.setData);
+        IO.once('init-items-list', _this.setData);
         return _this;
     }
     ListContainer.prototype.render = function () {
@@ -3984,13 +3986,19 @@ var React = __webpack_require__(7);
 var ListItems = /** @class */ (function (_super) {
     __extends(ListItems, _super);
     function ListItems(props) {
-        return _super.call(this, props) || this;
+        var _this = _super.call(this, props) || this;
+        _this.clickHandler = function (event, index) {
+            console.log(index);
+            console.log(event.target);
+        };
+        return _this;
     }
     ListItems.prototype.render = function () {
+        var _this = this;
         var _items = this.props.children.map(function (elt, index) {
-            return React.createElement("li", { key: index }, elt);
+            return (React.createElement("li", { key: index, onClick: function (event) { return _this.clickHandler(event, index); }, className: "items" }, elt));
         });
-        return React.createElement("ul", null, _items);
+        return React.createElement("ul", { className: "items-contaneir" }, _items);
     };
     return ListItems;
 }(React.Component));

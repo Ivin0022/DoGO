@@ -25,18 +25,21 @@ export class ListContainer extends React.Component<any, TodoStates> {
             text: ''
         };
    
-        IO.on('take it', (data: string) => {
-            console.log(data);
-            this.setState(prevState => ({
-                things: prevState.things.concat(data)
-            }));
-        });
+        IO.on('take it', this.setData);
+        IO.once('init-items-list', this.setData);
+    }
+
+    setData = (data: string) => {
+        console.log(data);
+        this.setState(prevState => ({
+            things: prevState.things.concat(data)
+        }));
     }
 
 
     submitFunc = (event: Event['submit']) => {
         event.preventDefault();
-        IO.emit('myevent', { data: this.state.text });
+        IO.emit('myevent', this.state.text);
         this.setState({ text: '' });
     }
 

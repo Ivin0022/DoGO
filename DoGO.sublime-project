@@ -19,7 +19,9 @@
 			"folder_exclude_patterns":
 			[
 				"src/server/__pycache__",
-				"node_modules"
+				"node_modules",
+				"env",
+				"py3.6.4"
 			],
 			"path": "."
 		}

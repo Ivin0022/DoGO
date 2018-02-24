@@ -1,0 +1,9 @@
+ul.items-container {
+	cursor: pointer;
+	list-style: none;
+}
+
+.items:hover {
+	background-color: #E26363;
+}
+
