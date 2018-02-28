@@ -1,54 +1,90 @@
 import os
 import json
+from contextlib import contextmanager
 from datetime import datetime
 
-PATH = './cache/'
+ROOT_DIR = './cache/'
 
-if not os.path.isdir(PATH):
-    os.mkdir(PATH)
+options = {
+    'indent': 4,
+}
+
+'''
+    {
+        id: {
+            "date": "20-10-1993",
+            "time": "23:31:00.433243",
+            "user": "ivy",
+            "item": "do the thing",
+        },
+
+    }
+'''
 
 
-def append(data, fileName):
-    FULL_PATH = ''.join([PATH, fileName])
+class createJSON:
+    def __init__(self, fileName):
+        self.fileName = fileName
+        self.fullpath = ''.join((ROOT_DIR, fileName, '.json'))
 
-    if not os.path.isfile(FULL_PATH):
-        with open(FULL_PATH, 'w') as f:
-            json.dump({}, f)
+        # TO DO check if folder exists
+        if not os.path.isfile(self.fullpath):
+            self.set({})
 
-    fData = None
-    with open(PATH + fileName, 'r') as f:
-        fData = json.load(f)
+    def _get(self):
+        obj = {}
+        try:
+            with open(self.fullpath, 'r') as f:
+                obj = json.load(f)
+        except Exception as e:
+            print(e)
 
-        dt = datetime.now()
-        da = str(dt.date())
-        tm = str(dt.time())
+        return obj
 
-        if da not in fData:
-            fData[da] = {}
+    def get(self):
+        obj = self._get()
+        for dt in obj:
+            for tm in obj[dt]:
+                yield {
+                    'id': ' '.join((dt, tm)),
+                    'value': obj[dt][tm]['item']
+                }
 
-        obj = {
+    def set(self, obj):
+        with open(self.fullpath, 'w') as f:
+            json.dump(obj, f, **options)
+
+    def add(self, val):
+        obj: dict = self._get()
+
+        now = str(datetime.now())
+        dt, tm = now.split()
+
+        if dt not in obj:
+            obj[dt] = {}
+
+        temp = {
             tm: {
-                'user': 'ivin',
-                'item': data
+                'user': 'ivy',
+                'item': val
             }
         }
 
-        fData[da].update(obj)
+        obj[dt].update(temp)
 
-    with open(PATH + fileName, 'w') as f:
-        json.dump(fData, f, indent=4, sort_keys=True)
+        self.set(obj)
 
+        # we arer use the datetime object as the id
+        # so, here we return the id and the value to
+        # be send back to client
+        return {'id': now, 'value': val}
 
-def getitems(fileName):
-    FULL_PATH = ''.join([PATH, fileName])
-
-    with open(FULL_PATH) as f:
-        data: dict = json.load(f)
-
-    for i in data.values():
-        for j in i.values():
-            yield j['item']
+    def delete(self, dt, tm):
+        obj: dict = self._get()
+        obj[dt].pop(tm, None)
+        self.set(obj)
 
 
 if __name__ == '__main__':
-    print(tuple(getitems('todo.json')))
+    items = createJSON('todoo')
+    items.delete("2018-03-01", "02:23:10.264763")

@@ -2,33 +2,44 @@ import * as React from 'react';
 
 
 export interface Event {
-    click: React.MouseEvent<HTMLLIElement>;
+    click: React.MouseEvent<HTMLButtonElement>;
 }
 
 export interface ItemsPorps {
-    children: Array<string>;
+    children: Array<{id?: string, value?: string}>;
+    pcb: Function;
 }
 
-export class ListItems extends React.Component<ItemsPorps, {}> {
+export interface ItemsState {
+    btnHide: string;
+}
+
+export class ListItems extends React.Component<ItemsPorps, ItemsState> {
 
     constructor(props: ItemsPorps) {
         super(props);
+        this.state = {
+            btnHide: ''
+        }
     }
 
-    clickHandler = (event: Event['click'], index: number) => {
-        console.log(index);
-        console.log(event.target);
+    clickHandler = (event: Event['click'], id?: string) => {
+        this.props.pcb(id);
     }
 
     render() {
 
-        let _items = this.props.children.map((elt, index) => {
+        let _items = this.props.children.map(elt => {
             return (
-                <li key={index}
-                    onClick={event => this.clickHandler(event, index)}
-                    className="items"
-                >
-                    {elt}
+                <li key={elt.id} className="items">
+                    {elt.value}
+                  
+                    <button
+                    key={elt.id}
+                    onClick={event => this.clickHandler(event, elt.id)}
+                    >
+                    Delete
+                    </button>
                 </li>
             );
         });

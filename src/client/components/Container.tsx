@@ -8,14 +8,14 @@ export interface Event {
 }
 
 export interface TodoStates {
-    things: Array<string>;
+    things: Array<{id?: string, value?: string}>;
     text: string;
 }
 
 
-const IO = SocketIO('http://localhost:5000/');
+const io = SocketIO('http://localhost:5000/');
 
-IO.on('connect', () => console.log('connected... '))
+io.on('connect', () => console.log('connected... '))
 
 export class ListContainer extends React.Component<any, TodoStates> {
     constructor(props: any) {
@@ -25,12 +25,17 @@ export class ListContainer extends React.Component<any, TodoStates> {
             text: ''
         };
    
-        IO.on('take it', this.setData);
-        IO.once('init-items-list', this.setData);
+        io.once('init-list-items', this.setData);
+        io.on('add-list-item-client', this.setData);
+
+        io.on('delete-list-item-client', (id:string) => {
+            this.setState(prevState => ({
+                things: prevState.things.filter(ele => ele.id !== id);            
+            }));
+        });
     }
 
-    setData = (data: string) => {
-        console.log(data);
+    setData = (data: object) => {
         this.setState(prevState => ({
             things: prevState.things.concat(data)
         }));
@@ -39,8 +44,13 @@ export class ListContainer extends React.Component<any, TodoStates> {
 
     submitFunc = (event: Event['submit']) => {
         event.preventDefault();
-        IO.emit('myevent', this.state.text);
+        io.emit('add-list-item', this.state.text);
         this.setState({ text: '' });
+    }
+
+    childCallback = (dataFromChild: any) => {
+        console.log('parent callback (listcontainer)');
+        io.emit('delete-list-item', dataFromChild)
     }
 
     updateValue = (event: Event['change']) => {
@@ -54,7 +64,7 @@ export class ListContainer extends React.Component<any, TodoStates> {
                 <h1>{this.props.children}</h1>
 
 
-                <ListItems>{this.state.things}</ListItems>
+                <ListItems pcb={this.childCallback}>{this.state.things}</ListItems>
                 
                 <form onSubmit={this.submitFunc}>
                     <input

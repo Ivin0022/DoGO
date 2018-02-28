@@ -1,5 +1,8 @@
 from flask_socketio import SocketIO
-import json_handler
+from json_handler import createJSON
+
+
+items = createJSON('toooodo')
 
 
 def socket_init(app):
@@ -7,15 +10,15 @@ def socket_init(app):
 
     @io.on('connect')
     def connect(*args):
-        io.emit('init-items-list', list(json_handler.getitems('todo.json')))
+        io.emit('init-list-items', list(items.get()))
 
-    @io.on('myevent')
+    @io.on('add-list-item')
     def hello(text):
-        print('\n' + '---' * 10 + '\n')
-        print(text)
-        print('\n' + '---' * 10 + '\n')
+        io.emit('add-list-item-client', items.add(text))
 
-        json_handler.append(text, 'todo.json')
-        io.emit('take it', text)
-
+    @io.on('delete-list-item')
+    def deleteItem(itemId):
+        print('delete')
+        items.delete(*itemId.split())
+        io.emit('delete-list-item-client', itemId)
     return io

@@ -3922,24 +3922,27 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(7);
-var SocketIO = __webpack_require__(28);
 var Items_1 = __webpack_require__(27);
-var IO = SocketIO('http://localhost:5000/');
-IO.on('connect', function () { return console.log('connected... '); });
+var SocketIO = __webpack_require__(28);
+var io = SocketIO('http://localhost:5000/');
+io.on('connect', function () { return console.log('connected... '); });
 var ListContainer = /** @class */ (function (_super) {
     __extends(ListContainer, _super);
     function ListContainer(props) {
         var _this = _super.call(this, props) || this;
         _this.setData = function (data) {
-            console.log(data);
             _this.setState(function (prevState) { return ({
                 things: prevState.things.concat(data)
             }); });
         };
         _this.submitFunc = function (event) {
             event.preventDefault();
-            IO.emit('myevent', _this.state.text);
+            io.emit('add-list-item', _this.state.text);
             _this.setState({ text: '' });
+        };
+        _this.childCallback = function (dataFromChild) {
+            console.log('parent callback (listcontainer)');
+            io.emit('delete-list-item', dataFromChild);
         };
         _this.updateValue = function (event) {
             _this.setState({ text: event.target.value });
@@ -3948,14 +3951,19 @@ var ListContainer = /** @class */ (function (_super) {
             things: [],
             text: ''
         };
-        IO.on('take it', _this.setData);
-        IO.once('init-items-list', _this.setData);
+        io.once('init-list-items', _this.setData);
+        io.on('add-list-item-client', _this.setData);
+        io.on('delete-list-item-client', function (id) {
+            _this.setState(function (prevState) { return ({
+                things: prevState.things.filter(function (ele) { return ele.id !== id; })
+            }); });
+        });
         return _this;
     }
     ListContainer.prototype.render = function () {
         return (React.createElement("div", null,
             React.createElement("h1", null, this.props.children),
-            React.createElement(Items_1.ListItems, null, this.state.things),
+            React.createElement(Items_1.ListItems, { pcb: this.childCallback }, this.state.things),
             React.createElement("form", { onSubmit: this.submitFunc },
                 React.createElement("input", { onChange: this.updateValue, value: this.state.text, type: "text" }),
                 React.createElement("button", null, "click me"))));
@@ -3987,16 +3995,20 @@ var ListItems = /** @class */ (function (_super) {
     __extends(ListItems, _super);
     function ListItems(props) {
         var _this = _super.call(this, props) || this;
-        _this.clickHandler = function (event, index) {
-            console.log(index);
-            console.log(event.target);
+        _this.clickHandler = function (event, id) {
+            _this.props.pcb(id);
+        };
+        _this.state = {
+            btnHide: ''
         };
         return _this;
     }
     ListItems.prototype.render = function () {
         var _this = this;
-        var _items = this.props.children.map(function (elt, index) {
-            return (React.createElement("li", { key: index, onClick: function (event) { return _this.clickHandler(event, index); }, className: "items" }, elt));
+        var _items = this.props.children.map(function (elt) {
+            return (React.createElement("li", { key: elt.id, className: "items" },
+                elt.value,
+                React.createElement("button", { key: elt.id, onClick: function (event) { return _this.clickHandler(event, elt.id); } }, "Delete")));
         });
         return React.createElement("ul", { className: "items-contaneir" }, _items);
     };
