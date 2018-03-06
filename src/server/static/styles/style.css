@@ -1,9 +1,29 @@
-ul.items-container {
-	cursor: pointer;
+li {
 	list-style: none;
 }
 
-.items:hover {
-	background-color: #E26363;
+ul {
+	padding-left: 0px;
 }
 
+.btn-hide {
+	display: none;
+	/*visibility: hidden;*/
+}
+
+.btn-show {
+	display: inline;
+	/*overflow-y: hidden;*/
+}
+
+
+
+
+/*icon overrides*/
+
+.material-icons {
+	font-size: 22px;
+}
+
+
+ /*bootstrap overides*/

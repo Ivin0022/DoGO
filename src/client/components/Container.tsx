@@ -8,7 +8,7 @@ export interface Event {
 }
 
 export interface TodoStates {
-    things: Array<{id?: string, value?: string}>;
+    things: Array<{id: string, value: string}>;
     text: string;
 }
 
@@ -30,12 +30,12 @@ export class ListContainer extends React.Component<any, TodoStates> {
 
         io.on('delete-list-item-client', (id:string) => {
             this.setState(prevState => ({
-                things: prevState.things.filter(ele => ele.id !== id);            
+                things: prevState.things.filter(ele => ele.id !== id)            
             }));
         });
     }
 
-    setData = (data: object) => {
+    setData = (data: {id: string, value: string}) => {
         this.setState(prevState => ({
             things: prevState.things.concat(data)
         }));
@@ -44,8 +44,10 @@ export class ListContainer extends React.Component<any, TodoStates> {
 
     submitFunc = (event: Event['submit']) => {
         event.preventDefault();
-        io.emit('add-list-item', this.state.text);
-        this.setState({ text: '' });
+        if (this.state.text !== '') {
+            io.emit('add-list-item', this.state.text);
+            this.setState({ text: '' });
+        }
     }
 
     childCallback = (dataFromChild: any) => {
@@ -60,20 +62,30 @@ export class ListContainer extends React.Component<any, TodoStates> {
     render() {
         return (
 
-            <div>
-                <h1>{this.props.children}</h1>
-
-
-                <ListItems pcb={this.childCallback}>{this.state.things}</ListItems>
-                
-                <form onSubmit={this.submitFunc}>
-                    <input
-                        onChange={this.updateValue}
-                        value={this.state.text}
-                        type="text"
-                    />
-                    <button>click me</button>
-                </form>
+            <div className="container-fluid">
+                <div className="card">
+                    <div className="card-header">
+                        <h3 className="text-center">{this.props.children}</h3>
+                    </div>
+                    
+                    <div className="card-body">
+                        <ListItems pcb={this.childCallback}>{this.state.things}</ListItems>
+                        
+                        <form onSubmit={this.submitFunc}>
+                            <div className="form-group clearfix">
+                                <input
+                                    className="form-control form-control-lg"
+                                    onChange={this.updateValue}
+                                    value={this.state.text}
+                                    type="text"
+                                />
+                                <small className="form-text text-muted float-right mt-2 mr-2">
+                                    <i>Press Enter to add items</i>
+                                </small>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         );
     }

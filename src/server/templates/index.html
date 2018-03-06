@@ -4,17 +4,41 @@
 	<meta charset="UTF-8">
 	<title>DoGO</title>
 
-	<link rel="stylesheet" href="/static/styles/style.css">
+	<link rel="stylesheet" href="/static/styles/bootstrap.css"/>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+
+	<link rel="stylesheet" href="/static/styles/style.css"/>
+
+	<style>
+		.opo {
+			font-size: 10px;
+		}
+	</style>
 </head>
 <body>
 	<h2>hello {{name}}</h2> <a href="/logout">logout</a>
-	<div id="root"></div>
-	
+	<!-- <button class="btn btn-sm btn-outline-primary">
+		<i class="material-icons opo p-0">edit</i>
+	</button> -->
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6">
+				<div id="root"></div>
+			</div>
+		</div>
+	</div>
+
 	<!-- Dependencies -->
 	<script crossorigin src="/static/lib/react.development.js"></script>
 	<script crossorigin src="/static/lib/react-dom.development.js"></script>
 	<script src="/static/lib/socket.io.js"></script>
 
+	<!-- bootstrap -->
+<!-- 	<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+ -->
 	<!-- Main -->
 	<script src="/static/app.js"></script>
 	<script src="http://localhost:35729/livereload.js"></script> 
