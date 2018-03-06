@@ -41,18 +41,19 @@ class createJSON:
 
         return obj
 
+    def set(self, obj):
+        with open(self.fullpath, 'w') as f:
+            json.dump(obj, f, **options)
+
     def get(self):
         obj = self._get()
         for dt in obj:
             for tm in obj[dt]:
+                # TODO try using namedtuple
                 yield {
                     'id': ' '.join((dt, tm)),
                     'value': obj[dt][tm]['item']
                 }
-
-    def set(self, obj):
-        with open(self.fullpath, 'w') as f:
-            json.dump(obj, f, **options)
 
     def add(self, val):
         obj: dict = self._get()
@@ -60,6 +61,7 @@ class createJSON:
         now = str(datetime.now())
         dt, tm = now.split()
 
+        # TODO try using defaultdict
         if dt not in obj:
             obj[dt] = {}
 

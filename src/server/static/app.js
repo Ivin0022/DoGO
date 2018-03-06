@@ -3937,8 +3937,10 @@ var ListContainer = /** @class */ (function (_super) {
         };
         _this.submitFunc = function (event) {
             event.preventDefault();
-            io.emit('add-list-item', _this.state.text);
-            _this.setState({ text: '' });
+            if (_this.state.text !== '') {
+                io.emit('add-list-item', _this.state.text);
+                _this.setState({ text: '' });
+            }
         };
         _this.childCallback = function (dataFromChild) {
             console.log('parent callback (listcontainer)');
@@ -3961,12 +3963,17 @@ var ListContainer = /** @class */ (function (_super) {
         return _this;
     }
     ListContainer.prototype.render = function () {
-        return (React.createElement("div", null,
-            React.createElement("h1", null, this.props.children),
-            React.createElement(Items_1.ListItems, { pcb: this.childCallback }, this.state.things),
-            React.createElement("form", { onSubmit: this.submitFunc },
-                React.createElement("input", { onChange: this.updateValue, value: this.state.text, type: "text" }),
-                React.createElement("button", null, "click me"))));
+        return (React.createElement("div", { className: "container-fluid" },
+            React.createElement("div", { className: "card" },
+                React.createElement("div", { className: "card-header" },
+                    React.createElement("h3", { className: "text-center" }, this.props.children)),
+                React.createElement("div", { className: "card-body" },
+                    React.createElement(Items_1.ListItems, { pcb: this.childCallback }, this.state.things),
+                    React.createElement("form", { onSubmit: this.submitFunc },
+                        React.createElement("div", { className: "form-group clearfix" },
+                            React.createElement("input", { className: "form-control form-control-lg", onChange: this.updateValue, value: this.state.text, type: "text" }),
+                            React.createElement("small", { className: "form-text text-muted float-right mt-2 mr-2" },
+                                React.createElement("i", null, "Press Enter to add items"))))))));
     };
     return ListContainer;
 }(React.Component));
@@ -3998,23 +4005,43 @@ var ListItems = /** @class */ (function (_super) {
         _this.clickHandler = function (event, id) {
             _this.props.pcb(id);
         };
+        _this.btn = {};
         _this.state = {
-            btnHide: ''
+            btnHide: true,
+            id: ''
         };
         return _this;
     }
     ListItems.prototype.render = function () {
         var _this = this;
         var _items = this.props.children.map(function (elt) {
-            return (React.createElement("li", { key: elt.id, className: "items" },
-                elt.value,
-                React.createElement("button", { key: elt.id, onClick: function (event) { return _this.clickHandler(event, elt.id); } }, "Delete")));
+            return (React.createElement("div", { key: elt.id, className: "list-group-item list-group-item-action", onMouseOver: function (event) { return _this.btn[elt.id].className = "btn-show"; }, onMouseOut: function (event) { return _this.btn[elt.id].className = "btn-hide"; } },
+                React.createElement("div", { className: "d-flex justify-content-between" },
+                    React.createElement("div", null,
+                        React.createElement("input", { className: "", type: "checkbox", id: "todo-item-checkbox" + elt.id }),
+                        React.createElement("label", { className: "m-0 py-2", htmlFor: "todo-item-checkbox" + elt.id }, elt.value)),
+                    React.createElement("div", { ref: function (r) { return _this.btn[elt.id] = r; }, className: "btn-hide" },
+                        React.createElement(OptionButton, { onDelete: function (event) { return _this.clickHandler(event, elt.id); } })))));
         });
-        return React.createElement("ul", { className: "items-contaneir" }, _items);
+        return React.createElement("div", { className: "list-group" }, _items);
     };
     return ListItems;
 }(React.Component));
 exports.ListItems = ListItems;
+var OptionButton = /** @class */ (function (_super) {
+    __extends(OptionButton, _super);
+    function OptionButton(props) {
+        return _super.call(this, props) || this;
+    }
+    OptionButton.prototype.render = function () {
+        return (React.createElement("div", { className: this.props.className },
+            React.createElement("button", { key: 'edit', onClick: this.props.onEdit, className: "btn btn-sm btn-outline-primary mr-1" },
+                React.createElement("i", { className: "material-icons" }, "edit")),
+            React.createElement("button", { key: 'delete', onClick: this.props.onDelete, className: "btn btn-sm btn-outline-danger mr-1" },
+                React.createElement("i", { className: "material-icons" }, "delete"))));
+    };
+    return OptionButton;
+}(React.Component));
 
 
 /***/ }),
