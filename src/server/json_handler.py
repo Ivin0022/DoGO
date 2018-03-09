@@ -9,17 +9,7 @@ options = {
     'indent': 4,
 }
 
-'''
-    {
-        id: {
-            "date": "20-10-1993",
-            "time": "23:31:00.433243",
-            "user": "ivy",
-            "item": "do the thing",
-        },
 
-    }
-'''
 
 
 class createJSON:
@@ -68,6 +58,7 @@ class createJSON:
         temp = {
             tm: {
                 'user': 'ivy',
+                'status': False,
                 'item': val
             }
         }
@@ -76,10 +67,16 @@ class createJSON:
 
         self.set(obj)
 
-        # we arer use the datetime object as the id
+        # we are use the datetime object as the id
         # so, here we return the id and the value to
         # be send back to client
         return {'id': now, 'value': val}
+
+    def update(self, id, **kwargs):
+        obj: dict = self._get()
+        st, tm = id.split()
+        obj[dt][tm].update(kwargs)
+
 
     def delete(self, dt, tm):
         obj: dict = self._get()

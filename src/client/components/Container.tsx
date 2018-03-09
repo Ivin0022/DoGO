@@ -50,7 +50,7 @@ export class ListContainer extends React.Component<any, TodoStates> {
         }
     }
 
-    childCallback = (dataFromChild: any) => {
+    deleteItem = (dataFromChild: string) => {
         console.log('parent callback (listcontainer)');
         io.emit('delete-list-item', dataFromChild)
     }
@@ -63,28 +63,30 @@ export class ListContainer extends React.Component<any, TodoStates> {
         return (
 
             <div className="container-fluid">
-                <div className="card">
-                    <div className="card-header">
+                <div className="card ">
+                    <div className="card-header bg-primary rounded-top">
                         <h3 className="text-center">{this.props.children}</h3>
                     </div>
+
+                    <ListItems 
+                    onItemDelete={this.deleteItem}
+                    >
+                        {this.state.things}
+                    </ListItems>
                     
-                    <div className="card-body">
-                        <ListItems pcb={this.childCallback}>{this.state.things}</ListItems>
-                        
-                        <form onSubmit={this.submitFunc}>
-                            <div className="form-group clearfix">
-                                <input
-                                    className="form-control form-control-lg"
-                                    onChange={this.updateValue}
-                                    value={this.state.text}
-                                    type="text"
-                                />
-                                <small className="form-text text-muted float-right mt-2 mr-2">
-                                    <i>Press Enter to add items</i>
-                                </small>
-                            </div>
-                        </form>
-                    </div>
+                    <form onSubmit={this.submitFunc}>
+                        <div className="form-group clearfix px-3">
+                            <input
+                                className="form-control form-control-lg"
+                                onChange={this.updateValue}
+                                value={this.state.text}
+                                type="text"
+                            />
+                            <small className="form-text text-muted float-right mt-2 mr-2">
+                                <i>Press Enter to add items</i>
+                            </small>
+                        </div>
+                    </form>
                 </div>
             </div>
         );

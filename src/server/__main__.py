@@ -1,39 +1,33 @@
-from flask import Flask, escape, render_template, session, redirect, request, url_for
-from sockets import socket_init
+from flask_socketio import SocketIO
+from json_handler import createJSON
+import view
 
-app = Flask(__name__)
-app.config['SCERET_KEY'] = 'ashfksh'
-
-io = socket_init(app)
+items = createJSON('toooodo')
 
 
-@app.route('/')
-@app.route('/<name>')
-def home(name=''):
-    if 'username' in session:
-        print('\n\n enter \n')
-        return render_template('index.html', name=name)
-    return redirect('/login')
+io = SocketIO(view.app)
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        session['username'] = request.form['username']
-        return redirect('/' + session['username'])
-    return render_template('login.html')
+@io.on('connect')
+def connect(*args):
+    io.emit('init-list-items', list(items.get()))
 
 
-@app.route('/logout')
-def logout():
-    # remove the username from the session if it's there
-    session.pop('username', None)
-    return redirect('/')
+@io.on('add-list-item')
+def hello(text):
+    io.emit('add-list-item-client', items.add(text))
 
 
-app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+@io.on('edit-list-item')
+def edit(data):
+    items.update(data['id'], status=data)
 
+
+@io.on('delete-list-item')
+def deleteItem(itemId):
+    print('delete')
+    items.delete(*itemId.split())
+    io.emit('delete-list-item-client', itemId)
 
 if __name__ == '__main__':
-    io.run(app, debug=True)
-    # app.run(debug=True)
+    io.run(view.app, debug=True)

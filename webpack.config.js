@@ -1,4 +1,6 @@
 let reloader = require("webpack-watch-livereload-plugin")
+var WebpackBuildNotifierPlugin = require('webpack-build-notifier');
+
 module.exports = {
     entry: "./src/client/index.tsx",
     output: {
@@ -25,7 +27,8 @@ module.exports = {
     externals: {
         "react": "React",
         "react-dom": "ReactDOM",
-        "socket.io": "socket.io-client"
+        "jquery": "$",
+        "socket.io-client": "io",
     },
 
     plugins: [
@@ -37,6 +40,9 @@ module.exports = {
                 './src/**/*.py',
                 './src/**/*.js',
             ]
+        }),
+        new WebpackBuildNotifierPlugin({
+            title: "DoGO"
         })
     ]
 
